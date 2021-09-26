@@ -10,8 +10,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.messaging.FirebaseMessaging
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
@@ -39,6 +41,17 @@ class MainActivity : AppCompatActivity() {
         binding.btnLogout.setOnClickListener {
             googleSignInClient.signOut()
         }
+
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task->
+            if (!task.isSuccessful){
+                Log.d(TAG, "onCreate: token falled")
+                return@OnCompleteListener
+            }
+            val token = task.result
+            Log.d(TAG, token ?: "")
+            Toast.makeText(this, token, Toast.LENGTH_SHORT).show()
+        })
     }
 
     private fun signIn() {
